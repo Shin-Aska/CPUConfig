@@ -6,7 +6,22 @@ int Utility::convertStringToInt(std::string number) {
     return result;
 }
 
+double Utility::convertStringToDouble(std::string number) {
+    double result = -1;
+    std::stringstream sstream(number);
+    sstream >> result;
+    return result;
+}
+
 std::string Utility::convertIntToString(int number) {
+    std::string result;
+    std::stringstream sstream;
+    sstream << number;
+    sstream >> result;
+    return result;
+}
+
+std::string Utility::convertDoubleToString(double number) {
     std::string result;
     std::stringstream sstream;
     sstream << number;
