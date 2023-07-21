@@ -204,32 +204,6 @@
          <string>Reset</string>
         </property>
        </widget>
-       <widget class="QLabel" name="rootAccess">
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>350</y>
-          <width>111</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>ENABLED</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_6">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>350</y>
-          <width>91</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Root access:</string>
-        </property>
-       </widget>
       </widget>
      </widget>
     </item>
@@ -291,6 +265,11 @@
           <string>CPU Model Name</string>
          </property>
         </row>
+        <row>
+         <property name="text">
+          <string>Average CPU Temperature</string>
+         </property>
+        </row>
         <column>
          <property name="text">
           <string>Value</string>
@@ -331,6 +310,11 @@
           <string>0</string>
          </property>
         </item>
+        <item row="7" column="0">
+         <property name="text">
+          <string>0°C</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -343,7 +327,7 @@
      <x>0</x>
      <y>0</y>
      <width>802</width>
-     <height>25</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
