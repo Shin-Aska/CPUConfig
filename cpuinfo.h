@@ -6,8 +6,9 @@
 #include <fstream>
 #include <sstream>
 
-//#include <QString>
-//#include <QDebug>
+#include <QDebug>
+#include <KF5/KAuth/KAuth>
+#include <sensors.h>
 
 #include "coreinfo.h"
 #include "utility.h"

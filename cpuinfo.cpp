@@ -139,6 +139,9 @@ std::vector<CoreInfo> CPUInfo::getProcessorInfo(){
                 else if (key == "vendor_id") {
                     cur_info.vendorId = value;
                 }
+                else if (key == "core id") {
+                    cur_info.coreId = Utility::convertStringToInt(value);
+                }
                 else if (key == "cpu family") {
                     cur_info.cpuFamilyId = Utility::convertStringToInt(value);
                 }
@@ -156,5 +159,50 @@ std::vector<CoreInfo> CPUInfo::getProcessorInfo(){
         }
     }
     result.push_back(cur_info);
+
+    sensors_init(nullptr);
+    sensors_chip_name const * cn;
+    int chip_int_pointer_reference = 0;
+
+    while ((cn = sensors_get_detected_chips(0, &chip_int_pointer_reference)) != 0) {
+        qDebug() << "Chip: " << cn->prefix << "/" << cn->path << " => " << cn->addr << " -> [" << cn->bus.nr << "," << cn->bus.type << "]" << Qt::endl;
+        std::string chip_name(cn->prefix);
+        if (chip_name.find("coretemp") != std::string::npos) {
+
+            sensors_feature const *feat;
+            int feature_int_pointer_reference = 0;
+
+            while ((feat = sensors_get_features(cn, &feature_int_pointer_reference)) != 0) {
+                std::string label(sensors_get_label(cn, feat));
+                std::vector<std::string> label_breakdown = Utility::splitString(label, ' ');
+                int coreId = Utility::convertStringToInt(label_breakdown.at(1));
+                qDebug() << label.c_str() << "(" << feat->name << ")" << feat->number << " " << feat->padding1 << Qt::endl;
+
+                sensors_subfeature const *subf;
+                int subfeature_int_pointer_reference = 0;
+
+                while ((subf = sensors_get_all_subfeatures(cn, feat, &subfeature_int_pointer_reference)) != 0) {
+                    std::string featureName(subf->name);
+                    double val;
+
+                    if (subf->flags & SENSORS_MODE_R) {
+                        int rc = sensors_get_value(cn, subf->number, &val);
+                        if (rc < 0) {
+                            qDebug() << "An error occured while trying to fetch value for " << subf->name << "err: " << rc;
+                        } else {
+                            if (featureName.find("input") != std::string::npos && label_breakdown.size() == 2 && label_breakdown.at(0) == "Core") {
+                                for (size_t i = 0; i < result.size(); i++) {
+                                    if (result.at(i).coreId == coreId) {
+                                        result.at(i).temperature = val;
+                                    }
+                                }
+                            }
+                            qDebug() << subf->name << "=" << val;
+                        }
+                    }
+                }
+            }
+        }
+    }
     return result;
 }
