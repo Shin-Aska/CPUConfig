@@ -9,6 +9,9 @@ CONFIG += c++11
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+CONFIG(release, debug|release) {
+    DEFINES += QT_NO_DEBUG_OUTPUT
+}
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -33,6 +36,19 @@ FORMS += \
 
 TRANSLATIONS += \
     CPUMaster_en_US.ts
+
+INCLUDEPATH += \
+    /usr/include/KF5 \
+    /usr/include/KF5/KAuth \
+    /usr/include/KF5/KCoreAddons \
+    /usr/include/KF5/KAuthCore \
+    /usr/include/sensors
+
+LIBS += \
+    -l:libKF5CoreAddons.so.5 \
+    -l:libKF5Auth.so \
+    -l:libKF5AuthCore.so \
+    -l:libsensors.so
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
