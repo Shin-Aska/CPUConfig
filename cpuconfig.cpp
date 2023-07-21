@@ -12,12 +12,25 @@ CPUConfig::CPUConfig(QWidget *parent)
         QTableWidget *CPUStatTable = CPUConfig::findChild<QTableWidget*>("CPUStatTable");
         QTableWidgetItem *avgCPUSpeedCell = CPUStatTable->item(0, 0);
         avgCPUSpeedCell->setText(QString::fromLocal8Bit(CPUInfo::getCurrentCPUFrequency(CPUSpeed::mhz).c_str()));
+
+        cores = CPUInfo::getProcessorInfo();
+        double average_temperature = 0;
+        double average_temp_core_count = 0;
+        for (size_t i = 0; i < cores.size(); i++) {
+            average_temperature += cores.at(i).temperature;
+            average_temp_core_count += 1;
+        }
+        average_temperature /= average_temp_core_count;
+
+        QTableWidgetItem *cpuAvgTemperature = CPUStatTable->item(7, 0);
+        cpuAvgTemperature->setText(
+            (Utility::convertDoubleToString(average_temperature) + "°C").c_str()
+        );
     });
     timer->start();
 
     cores = CPUInfo::getProcessorInfo();
 
-    QLabel *cpuPrevilageLabel = CPUConfig::findChild<QLabel*>("rootAccess");
     QPushButton *applyButton = CPUConfig::findChild<QPushButton*>("applyChanges");
     QPushButton *resetButton = CPUConfig::findChild<QPushButton*>("resetButton");
 
@@ -73,6 +86,8 @@ CPUConfig::CPUConfig(QWidget *parent)
         )
     );
 
+
+
     // This code section here will set the QDial and QSpinbox's minimum value
     // base on the CPU's allowable minimum frequency
     cpuMin->setMinimum(CPUInfo::getMinimumAllowableFrequency() / 1000);
@@ -92,19 +107,6 @@ CPUConfig::CPUConfig(QWidget *parent)
     cpuMax->setValue(CPUInfo::getMaximumCurrentFrequency() / 1000);
     minimum->setValue(CPUInfo::getMinimumCurrentFrequency() / 1000);
     maximum->setValue(CPUInfo::getMaximumCurrentFrequency() / 1000);
-
-    if (getuid()) {
-        cpuPrevilageLabel->setText("DISABLED");
-        cpuMin->setEnabled(false);
-        cpuMax->setEnabled(false);
-        minimum->setEnabled(false);
-        maximum->setEnabled(false);
-        applyButton->setEnabled(false);
-        resetButton->setEnabled(false);
-        QMessageBox messageBox;
-        messageBox.warning(0, "Error","This program is written in a way where you need root access. Otherwise it will not be able to do any system modifications. Program will now disable any functionalities that need root access.");
-        messageBox.setFixedSize(500,200);
-    }
 }
 
 CPUConfig::~CPUConfig()
@@ -140,7 +142,7 @@ void CPUConfig::on_applyChanges_clicked()
     QSpinBox *minimum = CPUConfig::findChild<QSpinBox*>("cpuMinBox");
     QSpinBox *maximum = CPUConfig::findChild<QSpinBox*>("cpuMaxBox");
     QString core_size = QString::fromLocal8Bit(Utility::convertIntToString(cores.size()).c_str());
-    //qDebug() << cores.size();
+    qDebug() << cores.size();
     bool encounteredErrors = false;
     for (size_t i = 0; i < cores.size(); i++) {
         CoreInfo cpuCore = cores.at(i);
@@ -155,7 +157,7 @@ void CPUConfig::on_applyChanges_clicked()
             break;
         }
 
-        //qDebug() << "CPU" << cpuCore.processorId << " set frequency min " << minimum->value() * CPUSpeed::mhz << " frequency max" << maximum->value() * CPUSpeed::mhz;
+        qDebug() << "CPU" << cpuCore.processorId << " set frequency min " << minimum->value() * CPUSpeed::mhz << " frequency max" << maximum->value() * CPUSpeed::mhz;
     }
 
     if (!encounteredErrors) {
