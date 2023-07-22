@@ -7,7 +7,6 @@
 #include <sstream>
 
 #include <QDebug>
-#include <KF5/KAuth/KAuth>
 #include <sensors.h>
 
 #include "coreinfo.h"

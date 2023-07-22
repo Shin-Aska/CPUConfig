@@ -107,6 +107,18 @@ CPUConfig::CPUConfig(QWidget *parent)
     cpuMax->setValue(CPUInfo::getMaximumCurrentFrequency() / 1000);
     minimum->setValue(CPUInfo::getMinimumCurrentFrequency() / 1000);
     maximum->setValue(CPUInfo::getMaximumCurrentFrequency() / 1000);
+
+    if (getuid()) {
+        cpuMin->setEnabled(false);
+        cpuMax->setEnabled(false);
+        minimum->setEnabled(false);
+        maximum->setEnabled(false);
+        applyButton->setEnabled(false);
+        resetButton->setEnabled(false);
+        QMessageBox messageBox;
+        messageBox.warning(0, "Error","This program is written in a way where you need root access. Otherwise it will not be able to do any system modifications. Program will now disable any functionalities that need root access.");
+        messageBox.setFixedSize(500,200);
+    }
 }
 
 CPUConfig::~CPUConfig()
