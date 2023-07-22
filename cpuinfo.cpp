@@ -165,7 +165,7 @@ std::vector<CoreInfo> CPUInfo::getProcessorInfo(){
     int chip_int_pointer_reference = 0;
 
     while ((cn = sensors_get_detected_chips(0, &chip_int_pointer_reference)) != 0) {
-        qDebug() << "Chip: " << cn->prefix << "/" << cn->path << " => " << cn->addr << " -> [" << cn->bus.nr << "," << cn->bus.type << "]" << Qt::endl;
+        qDebug() << "Chip: " << cn->prefix << "/" << cn->path << " => " << cn->addr << " -> [" << cn->bus.nr << "," << cn->bus.type << "]";
         std::string chip_name(cn->prefix);
         if (chip_name.find("coretemp") != std::string::npos) {
 
@@ -176,7 +176,7 @@ std::vector<CoreInfo> CPUInfo::getProcessorInfo(){
                 std::string label(sensors_get_label(cn, feat));
                 std::vector<std::string> label_breakdown = Utility::splitString(label, ' ');
                 int coreId = Utility::convertStringToInt(label_breakdown.at(1));
-                qDebug() << label.c_str() << "(" << feat->name << ")" << feat->number << " " << feat->padding1 << Qt::endl;
+                qDebug() << label.c_str() << "(" << feat->name << ")" << feat->number << " " << feat->padding1;
 
                 sensors_subfeature const *subf;
                 int subfeature_int_pointer_reference = 0;
